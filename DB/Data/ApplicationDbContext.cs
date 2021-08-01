@@ -1,10 +1,5 @@
 ﻿using DB.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DB.Data
 {
@@ -17,9 +12,14 @@ namespace DB.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Shift>()
+                .HasOne(c => c.Employee);
+
             base.OnModelCreating(builder);
         }
 
         public DbSet<Shift> Shifts { get; set; }
+
+        public DbSet<Employee> Employees { get; set; }
     }
 }

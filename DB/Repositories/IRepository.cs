@@ -1,21 +1,25 @@
-﻿using System;
+﻿using DB.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DB.Repositories
 {
-    public interface IRepository<T>
+    public interface IRepository<TEntity, TId> where TEntity : IEntity<TId>
     {
-        public IEnumerable<T> GetAll();
+        public IEnumerable<TEntity> GetAll();
 
-        public Task<T> Create(T t);
+        Task<TEntity> Create(TEntity entity);
 
-        public T GetById(int id);
+        public TEntity FindById(TId id);
 
-        public void Update(T t);
+        IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> expression);
 
-        public void Delete(int id);
+        public void Update(TEntity t);
+
+        public void Remove(TId id);
     }
 }

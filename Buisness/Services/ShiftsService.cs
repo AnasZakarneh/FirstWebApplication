@@ -11,9 +11,9 @@ namespace Buisness.Services
 {
     public class ShiftsService : IShiftsService
     {
-        private IRepository<Shift> _shiftsRepository;
+        private IShiftRepository _shiftsRepository;
 
-        public ShiftsService(IRepository<Shift> shiftRepository)
+        public ShiftsService(IShiftRepository shiftRepository)
         {
             _shiftsRepository = shiftRepository;
         }
@@ -25,7 +25,7 @@ namespace Buisness.Services
 
         public void DeleteShift(int id)
         {
-            _shiftsRepository.Delete(id);
+            _shiftsRepository.Remove(id);
         }
 
         public IEnumerable<Shift> GetAllShifts()
@@ -35,7 +35,7 @@ namespace Buisness.Services
 
         public Shift GetShiftById(int id)
         {
-            return _shiftsRepository.GetById(id);
+            return _shiftsRepository.RetrieveShiftDetails(id);
         }
 
         public void UpdateShift(Shift shift)

@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Buisness.Services;
 using DB.Repositories;
 using DB.Models;
+using System.Text.Json.Serialization;
 
 namespace FirstWebApplication
 {
@@ -35,7 +36,9 @@ namespace FirstWebApplication
             services.AddControllers();
             services.AddHttpClient();
             services.AddTransient<IShiftsService, ShiftsService>();
-            services.AddTransient<IRepository<Shift>, ShiftsRepository>();
+            services.AddTransient<IShiftRepository, ShiftRepository>();
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            services.AddTransient<IEmployeeService, EmployeeService>();
 
             services.AddSwaggerGen(c =>
             {
