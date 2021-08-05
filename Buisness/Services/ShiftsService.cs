@@ -1,4 +1,5 @@
-﻿using DB.Models;
+﻿using AutoMapper;
+using Buisness.Models;
 using DB.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,15 +13,19 @@ namespace Buisness.Services
     public class ShiftsService : IShiftsService
     {
         private IShiftRepository _shiftsRepository;
+        private IMapper _mapper;
 
-        public ShiftsService(IShiftRepository shiftRepository)
+        public ShiftsService(IShiftRepository shiftRepository, IMapper mapper)
         {
             _shiftsRepository = shiftRepository;
+            _mapper = mapper;
         }
 
         public async Task<Shift> CreateShift(Shift shift)
         {
-            return await _shiftsRepository.Create(shift);
+            var createdShift =  await _shiftsRepository.Create(_mapper.Map<DB.Models.Shift>(shift));
+
+            return _mapper.Map<Shift>(createdShift);
         }
 
         public void DeleteShift(int id)
@@ -30,17 +35,18 @@ namespace Buisness.Services
 
         public IEnumerable<Shift> GetAllShifts()
         {
-            return _shiftsRepository.GetAll();
+            return _shiftsRepository.GetAll()
+                .Select(_mapper.Map<Shift>);
         }
 
         public Shift GetShiftById(int id)
         {
-            return _shiftsRepository.RetrieveShiftDetails(id);
+            return _mapper.Map<Shift>(_shiftsRepository.RetrieveShiftDetails(id));
         }
 
         public void UpdateShift(Shift shift)
         {
-            _shiftsRepository.Update(shift);
+            _shiftsRepository.Update(_mapper.Map<DB.Models.Shift>(shift));
         }
     }
 }

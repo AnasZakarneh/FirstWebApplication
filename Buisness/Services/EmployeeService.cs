@@ -1,4 +1,5 @@
-﻿using DB.Models;
+﻿using AutoMapper;
+using Buisness.Models;
 using DB.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -12,15 +13,20 @@ namespace Buisness.Services
     public class EmployeeService : IEmployeeService
     {
         private IEmployeeRepository _employeeRepository;
+        private IMapper _mapper;
 
-        public EmployeeService(IEmployeeRepository shiftRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository,
+            IMapper mapper)
         {
-            _employeeRepository = shiftRepository;
+            _employeeRepository = employeeRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Employee> CreateEmployee(Employee shift)
+        public async Task<Employee> CreateEmployee(Employee employee)
         {
-            return await _employeeRepository.Create(shift);
+            var createdEmployee =  await _employeeRepository.Create(_mapper.Map<DB.Models.Employee>(employee));
+
+            return _mapper.Map<Employee>(createdEmployee);
         }
 
         public void DeleteEmployee(int id)
@@ -30,17 +36,18 @@ namespace Buisness.Services
 
         public IEnumerable<Employee> GetAllEmployees()
         {
-            return _employeeRepository.GetAll();
+            return _employeeRepository.GetAll()
+                .Select(_mapper.Map<Employee>);
         }
 
         public Employee GetEmployeeById(int id)
         {
-            return _employeeRepository.FindById(id);
+            return _mapper.Map<Employee>(_employeeRepository.FindById(id));
         }
 
-        public void UpdateEmployee(Employee shift)
+        public void UpdateEmployee(Employee employee)
         {
-            _employeeRepository.Update(shift);
+            _employeeRepository.Update(_mapper.Map<DB.Models.Employee>(employee));
         }
     }
 }

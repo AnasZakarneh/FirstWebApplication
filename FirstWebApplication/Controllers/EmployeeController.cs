@@ -1,10 +1,10 @@
 ﻿using Buisness.Services;
-using DB.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace FirstWebApplication.Controllers
 {
@@ -13,32 +13,36 @@ namespace FirstWebApplication.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
-        public EmployeesController(IEmployeeService employeeService)
+        private readonly IMapper _mapper;
+
+        public EmployeesController(IEmployeeService employeeService, IMapper mapper)
         {
             _employeeService = employeeService;
+            _mapper = mapper;
         }
 
         // GET: api/<EmployeesController>
         [HttpGet]
         public IEnumerable<Employee> Get()
         {
-            return _employeeService.GetAllEmployees();
+            return _employeeService.GetAllEmployees()
+                .Select(_mapper.Map<Employee>);
         }
 
         //GET api/<EmployeesController>/5
         [HttpGet("{id}")]
         public Employee Get(int id)
         {
-            return _employeeService.GetEmployeeById(id);
+            return _mapper.Map<Employee>(_employeeService.GetEmployeeById(id));
         }
 
         // POST api/<EmployeesController>
         [HttpPost]
         public async Task<Employee> Post([FromBody] Employee employee)
         {
-            var newEmployee = await _employeeService.CreateEmployee(employee);
+            var newEmployee = await _employeeService.CreateEmployee(_mapper.Map<Buisness.Models.Employee>(employee));
 
-            return newEmployee;
+            return _mapper.Map<Employee>(newEmployee);
         }
 
         // PUT api/<EmployeesController>/5
@@ -46,7 +50,7 @@ namespace FirstWebApplication.Controllers
         public void Put(int id, [FromBody] Employee employee)
         {
             employee.Id = id;
-            _employeeService.UpdateEmployee(employee);
+            _employeeService.UpdateEmployee(_mapper.Map<Buisness.Models.Employee>(employee));
         }
 
         // DELETE api/<EmployeesController>/5

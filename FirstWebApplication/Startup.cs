@@ -17,6 +17,7 @@ using Buisness.Services;
 using DB.Repositories;
 using DB.Models;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace FirstWebApplication
 {
@@ -40,6 +41,7 @@ namespace FirstWebApplication
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddTransient<IEmployeeService, EmployeeService>();
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FirstWebApplication", Version = "v1" });
