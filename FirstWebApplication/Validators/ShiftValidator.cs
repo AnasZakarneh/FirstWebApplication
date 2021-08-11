@@ -2,7 +2,7 @@
 
 namespace FirstWebApplication.Validators
 {
-    public class ShiftValidator : AbstractValidator<Shift>, IShiftValidator
+    public class ShiftValidator : AbstractValidator<Shift>
     {
         public ShiftValidator()
         {

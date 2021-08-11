@@ -12,6 +12,7 @@ using DB.Repositories;
 using FirstWebApplication.Configurations;
 using FirstWebApplication.Validators;
 using FluentValidation.AspNetCore;
+using FluentValidation;
 
 namespace FirstWebApplication
 {
@@ -36,7 +37,7 @@ namespace FirstWebApplication
             services.AddTransient<IShiftRepository, ShiftRepository>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddTransient<IEmployeeService, EmployeeService>();
-            services.AddTransient<IShiftValidator, ShiftValidator>();
+            services.AddTransient<IValidator<Shift>, ShiftValidator>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddFluentValidation();
@@ -55,10 +56,6 @@ namespace FirstWebApplication
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FirstWebApplication v1"));
             }
-
-            app.UseExceptionHandler();
-
-            app.UseStatusCodePages();
 
             app.UseHttpsRedirection();
 

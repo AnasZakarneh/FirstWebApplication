@@ -17,12 +17,11 @@ namespace FirstWebApplication.Controllers
     {
         private readonly IShiftsService _shiftService;
         private readonly IMapper _mapper;
-        private readonly IShiftValidator _shiftValidator;
-        public ShiftsController(IShiftsService shiftsService, IMapper mapper, IShiftValidator shiftValidator)
+        public ShiftsController(IShiftsService shiftsService,
+            IMapper mapper)
         {
             _shiftService = shiftsService;
             _mapper = mapper;
-            _shiftValidator = shiftValidator;
         }
 
         // GET: api/<ShiftsController>
@@ -42,27 +41,35 @@ namespace FirstWebApplication.Controllers
 
         // POST api/<ShiftsController>
         [HttpPost]
-        public async Task<Shift> Post([FromBody] Shift shift)
+        public async Task<ActionResult<Shift>> Post([FromBody] Shift shift)
         {
-            await _shiftValidator.ValidateAndThrowAsync(shift);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
             var newShift = await _shiftService.CreateShift(_mapper.Map<Buisness.Models.Shift>(shift));
 
-            return _mapper.Map<Shift>(newShift);
+            return Ok(_mapper.Map<Shift>(newShift));
         }
 
         // PUT api/<ShiftsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Shift shift)
+        public ActionResult Put(int id, [FromBody] Shift shift)
         {
             shift.Id = id;
             _shiftService.UpdateShift(_mapper.Map<Buisness.Models.Shift>(shift));
+
+            return Ok();
         }
 
         // DELETE api/<ShiftsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
             _shiftService.DeleteShift(id);
+
+            return Ok();
         }
     }
 }

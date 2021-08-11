@@ -42,26 +42,30 @@ namespace FirstWebApplication.Controllers
 
         // POST api/<EmployeesController>
         [HttpPost]
-        public async Task<Employee> Post([FromBody] Employee employee)
+        public async Task<ActionResult<Employee>> Post([FromBody] Employee employee)
         {
             var newEmployee = await _employeeService.CreateEmployee(_mapper.Map<Buisness.Models.Employee>(employee));
 
-            return _mapper.Map<Employee>(newEmployee);
+            return Ok(_mapper.Map<Employee>(newEmployee));
         }
 
         // PUT api/<EmployeesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Employee employee)
+        public ActionResult Put(int id, [FromBody] Employee employee)
         {
             employee.Id = id;
             _employeeService.UpdateEmployee(_mapper.Map<Buisness.Models.Employee>(employee));
+
+            return Ok();
         }
 
         // DELETE api/<EmployeesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
             _employeeService.DeleteEmployee(id);
+
+            return Ok();
         }
     }
 }
