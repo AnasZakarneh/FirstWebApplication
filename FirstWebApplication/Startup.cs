@@ -1,23 +1,17 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DB.Data;
 using Microsoft.EntityFrameworkCore;
 using Buisness.Services;
 using DB.Repositories;
-using DB.Models;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
+using FirstWebApplication.Configurations;
+using FirstWebApplication.Validators;
+using FluentValidation.AspNetCore;
 
 namespace FirstWebApplication
 {
@@ -34,14 +28,18 @@ namespace FirstWebApplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.Configure<AuthorConfiguration>(Configuration.GetSection("AppInfo:Author"));
+
             services.AddControllers();
             services.AddHttpClient();
             services.AddTransient<IShiftsService, ShiftsService>();
             services.AddTransient<IShiftRepository, ShiftRepository>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<IShiftValidator, ShiftValidator>();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddFluentValidation();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FirstWebApplication", Version = "v1" });
@@ -57,6 +55,10 @@ namespace FirstWebApplication
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FirstWebApplication v1"));
             }
+
+            app.UseExceptionHandler();
+
+            app.UseStatusCodePages();
 
             app.UseHttpsRedirection();
 

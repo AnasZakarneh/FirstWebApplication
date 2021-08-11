@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Buisness.Services;
 using DB.Models;
+using FirstWebApplication.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -15,10 +17,12 @@ namespace FirstWebApplication.Controllers
     {
         private readonly IShiftsService _shiftService;
         private readonly IMapper _mapper;
-        public ShiftsController(IShiftsService shiftsService, IMapper mapper)
+        private readonly IShiftValidator _shiftValidator;
+        public ShiftsController(IShiftsService shiftsService, IMapper mapper, IShiftValidator shiftValidator)
         {
             _shiftService = shiftsService;
             _mapper = mapper;
+            _shiftValidator = shiftValidator;
         }
 
         // GET: api/<ShiftsController>
@@ -40,6 +44,7 @@ namespace FirstWebApplication.Controllers
         [HttpPost]
         public async Task<Shift> Post([FromBody] Shift shift)
         {
+            await _shiftValidator.ValidateAndThrowAsync(shift);
             var newShift = await _shiftService.CreateShift(_mapper.Map<Buisness.Models.Shift>(shift));
 
             return _mapper.Map<Shift>(newShift);

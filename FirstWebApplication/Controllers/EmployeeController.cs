@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using FirstWebApplication.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace FirstWebApplication.Controllers
 {
@@ -14,11 +16,13 @@ namespace FirstWebApplication.Controllers
     {
         private readonly IEmployeeService _employeeService;
         private readonly IMapper _mapper;
-
-        public EmployeesController(IEmployeeService employeeService, IMapper mapper)
+        private readonly AuthorConfiguration _authorConfiguration;
+        public EmployeesController(IEmployeeService employeeService, IMapper mapper,
+             IOptions<AuthorConfiguration> authorConfiguration)
         {
             _employeeService = employeeService;
             _mapper = mapper;
+            _authorConfiguration = authorConfiguration.Value;
         }
 
         // GET: api/<EmployeesController>
